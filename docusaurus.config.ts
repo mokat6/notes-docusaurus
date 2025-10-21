@@ -93,6 +93,15 @@ const config: Config = {
         sidebarPath: "./sidebars.ts", // 👈 separate sidebar file
       },
     ],
+    [
+      "@docusaurus/plugin-content-docs",
+      {
+        id: "cleanCode", // 👈 unique ID for this docs instance
+        path: "notes/clean-code", // 👈 folder you created
+        routeBasePath: "clean-code", // URL base path
+        sidebarPath: "./sidebars.ts", // 👈 separate sidebar file
+      },
+    ],
   ],
 
   themeConfig: {
@@ -127,6 +136,13 @@ const config: Config = {
           position: "left",
           label: "js",
           docsPluginId: "js", // 🔑 tell Docusaurus which docs instance
+        },
+        {
+          type: "docSidebar",
+          sidebarId: "tutorialSidebar", // must match the sidebar ID from your sidebars file
+          position: "left",
+          label: "clean-code",
+          docsPluginId: "cleanCode", // 🔑 tell Docusaurus which docs instance
         },
       ],
     },
