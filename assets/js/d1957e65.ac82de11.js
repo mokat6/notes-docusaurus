@@ -1,0 +1,1 @@
+"use strict";(globalThis.webpackChunkdoctrex=globalThis.webpackChunkdoctrex||[]).push([[255],{9677:s=>{s.exports=JSON.parse('{"tags":[{"label":"greetings","permalink":"/notes-docusaurus/docs/tags/greetings","count":1}]}')}}]);
