@@ -54,6 +54,27 @@ const config: Config = {
   ],
   plugins: [
     [
+      "@cmfcmf/docusaurus-search-local",
+      {
+        indexBlog: false, // 🔥 disables blog indexing (you don’t have a blog)
+        indexDocs: true, // keep docs search
+
+        // TODO: ONLY INDEX TITLES, HEADINGS. ignore all paragraph text. enable later when it gets too big
+        // extendPage(page) {
+        //   // page.title = doc frontmatter title
+        //   // page.content = full HTML body
+
+        //   // Keep only headings (h1-h6)
+        //   const headingRegex = /<h[1-6][^>]*>(.*?)<\/h[1-6]>/g;
+        //   const matches = [...page.content.matchAll(headingRegex)];
+        //   const headingsText = matches.map(m => m[1]).join(" ");
+        //   page.content = headingsText; // replace full content with only headings
+
+        //   return page;
+        // },
+      },
+    ],
+    [
       "@docusaurus/plugin-content-docs",
       {
         id: "community",
@@ -109,51 +130,7 @@ const config: Config = {
         },
       ],
     },
-    footer: {
-      style: "dark",
-      links: [
-        {
-          title: "Docs",
-          items: [
-            {
-              label: "Tutorial",
-              to: "/docs/intro",
-            },
-          ],
-        },
-        {
-          title: "Community",
-          items: [
-            {
-              label: "Stack Overflow",
-              href: "https://stackoverflow.com/questions/tagged/docusaurus",
-            },
-            {
-              label: "Discord",
-              href: "https://discordapp.com/invite/docusaurus",
-            },
-            {
-              label: "X",
-              href: "https://x.com/docusaurus",
-            },
-          ],
-        },
-        {
-          title: "More",
-          items: [
-            {
-              label: "Blog",
-              to: "/blog",
-            },
-            {
-              label: "GitHub",
-              href: "https://github.com/facebook/docusaurus",
-            },
-          ],
-        },
-      ],
-      copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
-    },
+
     prism: {
       theme: prismThemes.github,
       darkTheme: prismThemes.dracula,
