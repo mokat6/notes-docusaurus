@@ -45,24 +45,32 @@ const config: Config = {
           // Remove this to remove the "edit this page" links.
           editUrl: "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/",
         },
-        blog: {
-          showReadingTime: true,
-          feedOptions: {
-            type: ["rss", "atom"],
-            xslt: true,
-          },
-          // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
-          editUrl: "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/",
-          // Useful options to enforce blogging best practices
-          onInlineTags: "warn",
-          onInlineAuthors: "warn",
-          onUntruncatedBlogPosts: "warn",
-        },
+        blog: false,
         theme: {
           customCss: "./src/css/custom.css",
         },
       } satisfies Preset.Options,
+    ],
+  ],
+  plugins: [
+    [
+      "@docusaurus/plugin-content-docs",
+      {
+        id: "community",
+        path: "community",
+        routeBasePath: "community",
+        sidebarPath: "./sidebars.ts",
+        // ... other options
+      },
+    ],
+    [
+      "@docusaurus/plugin-content-docs",
+      {
+        id: "js", // 👈 unique ID for this docs instance
+        path: "js", // 👈 folder you created
+        routeBasePath: "js", // URL base path
+        sidebarPath: "./sidebars.ts", // 👈 separate sidebar file
+      },
     ],
   ],
 
@@ -85,11 +93,19 @@ const config: Config = {
           position: "left",
           label: "Tutorial3",
         },
-        { to: "/blog", label: "Blog", position: "left" },
         {
-          href: "https://github.com/facebook/docusaurus",
-          label: "GitHub",
-          position: "right",
+          type: "docSidebar",
+          sidebarId: "tutorialSidebar", // must match the sidebar ID from your sidebars file
+          position: "left",
+          label: "Community",
+          docsPluginId: "community", // 🔑 tell Docusaurus which docs instance
+        },
+        {
+          type: "docSidebar",
+          sidebarId: "tutorialSidebar", // must match the sidebar ID from your sidebars file
+          position: "left",
+          label: "js",
+          docsPluginId: "js", // 🔑 tell Docusaurus which docs instance
         },
       ],
     },

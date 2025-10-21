@@ -1,6 +1,8 @@
-# hello
+---
+sidebar_label: "Hi!"
+sidebar_position: 9
+---
 
-### sub level Olla
+# Hello
 
-hi hi hi
-neihou
+This is my **first Docusaurus document**!
