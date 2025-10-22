@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="generator" content="Docusaurus v3.9.2">
 <title data-rh="true">clean code by Uncle Bob | Shoulders of Giants</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:image" content="https://mokat6.github.io/notes-docusaurus/img/docusaurus-social-card.jpg"><meta data-rh="true" name="twitter:image" content="https://mokat6.github.io/notes-docusaurus/img/docusaurus-social-card.jpg"><meta data-rh="true" property="og:url" content="https://mokat6.github.io/notes-docusaurus/clean-code/intro/"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-cleanCode-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-cleanCode-current"><meta data-rh="true" property="og:title" content="clean code by Uncle Bob | Shoulders of Giants"><meta data-rh="true" name="description" content="- Code rot"><meta data-rh="true" property="og:description" content="- Code rot"><link data-rh="true" rel="icon" href="/notes-docusaurus/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://mokat6.github.io/notes-docusaurus/clean-code/intro/"><link data-rh="true" rel="alternate" href="https://mokat6.github.io/notes-docusaurus/clean-code/intro/" hreflang="en"><link data-rh="true" rel="alternate" href="https://mokat6.github.io/notes-docusaurus/clean-code/intro/" hreflang="x-default"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"clean code by Uncle Bob","item":"https://mokat6.github.io/notes-docusaurus/clean-code/intro"}]}</script><link rel="stylesheet" href="/notes-docusaurus/assets/css/styles.71a680e8.css">
-<script src="/notes-docusaurus/assets/js/runtime~main.25bbc98e.js" defer="defer"></script>
+<script src="/notes-docusaurus/assets/js/runtime~main.82946d25.js" defer="defer"></script>
 <script src="/notes-docusaurus/assets/js/main.eb864d05.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard" data-theme="light">
@@ -16,6 +16,49 @@
 <li class="">Code rot</li>
 <li class="">wading code</li>
 <li class="">different schools of thought, like Jiu Jitsu</li>
+</ul>
+<h1>Naming</h1>
+<ul>
+<li class="">implicit naming vs explicit naming
+explicit naming when you have those long names, no need to guess. Implicit naming requires mental mapping. C means count.</li>
+<li class="">Don&#x27;t show off your IQ with implicit names, one liners, etc... As a code author, you write for the other devs reading your code.</li>
+<li class="">Meaningful distinctions
+Make differences between named things obvious. Bad example</li>
+</ul>
+<div class="language-js codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-js codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token function" style="color:#d73a49">getActiveAccount</span><span class="token punctuation" style="color:#393A34">(</span><span class="token punctuation" style="color:#393A34">)</span><span class="token punctuation" style="color:#393A34">;</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain"></span><span class="token function" style="color:#d73a49">getActiveAccounts</span><span class="token punctuation" style="color:#393A34">(</span><span class="token punctuation" style="color:#393A34">)</span><span class="token punctuation" style="color:#393A34">;</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain"></span><span class="token function" style="color:#d73a49">getActiveAccountInfo</span><span class="token punctuation" style="color:#393A34">(</span><span class="token punctuation" style="color:#393A34">)</span><span class="token punctuation" style="color:#393A34">;</span><br></span></code></pre></div></div>
+<ul>
+<li class="">
+<p>Pronouncable names</p>
+</li>
+<li class="">
+<p>Searchable names</p>
+</li>
+<li class="">
+<p>Avoid encoding if you can</p>
+<ul>
+<li class="">Type encoding (Hungarian notation). Uncle Bob doesn&#x27;t like I interface prefix.</li>
+<li class="">Scope encoding. <code>m_</code> for class members, in Java. <code>global</code> <code>tmp</code> etc</li>
+</ul>
+</li>
+<li class="">
+<p>Class/obj - noun, method - verb</p>
+</li>
+<li class="">
+<p>No culture dependent jokes like <code>eatMyShorts()</code> instead of <code>abort()</code></p>
+</li>
+<li class="">
+<p>One word per concept
+If <code>add</code> means add to array, then for math addition, use another word like sum</p>
+</li>
+<li class="">
+<p>Contextual grouping
+street, zip, state, country. When not grouped, you stare at <code>const state</code> and wonder wtf? but if grouped in<br>
+<code>mailingAddress.state</code> then it&#x27;s clear.<br>
+<!-- -->address - in &quot;postal&quot; context it&#x27;s clear. But in other contexts, is it MAC? URL? IP?</p>
+</li>
+<li class="">
+<p>Renaming in old code is OK. If you can improve things, do it.</p>
+</li>
 </ul></div></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="Docs pages"></nav></div></div></div></div></main></div></div></div></div>
 </body>
 </html>
