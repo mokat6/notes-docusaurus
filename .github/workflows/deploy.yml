@@ -9,22 +9,44 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+    permissions:
+      contents: write # needed to push to gh-pages branch
+
+    steps:
+      # Step 1: Checkout the repo
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - run: npm ci
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: npm ci
 
-      - run: npm run build
+      # Step 4: Setup Git user
+      - name: Setup Git user
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v5
+      # Step 5: Setup SSH agent with deploy key
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.8.1
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./build
-          # optional
-          user_name: github-actions[bot]
-          user_email: github-actions[bot]@users.noreply.github.com
+          ssh-private-key: ${{ secrets.DEPLOY_KEY }}
+
+      # Step 6: Ensure SSH is used for the Git remote
+      - name: Set Git remote to SSH
+        run: git remote set-url origin git@github.com:${{ github.repository }}.git
+
+      # Step 7: Deploy with Docusaurus
+      - name: Deploy to GitHub Pages
+        env:
+          USE_SSH: true
+          GIT_USER: github-actions[bot]
+        run: npm run deploy
