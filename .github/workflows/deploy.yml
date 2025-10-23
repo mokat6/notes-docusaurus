@@ -3,7 +3,7 @@ name: Deploy Docusaurus site to GitHub Pages
 on:
   push:
     branches:
-      - master # 👈 or 'master' if that’s your default branch
+      - master # 👈 or 'main' if that's your default branch
   workflow_dispatch: # allows manual trigger from the Actions tab
 
 jobs:
@@ -21,23 +21,13 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Setup Git user
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-
-      - name: Setup Git credentials
-        run: |
-          echo "https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com" > ~/.git-credentials
-          git config --global credential.helper store
-
       - name: Deploy to GitHub Pages
         env:
-          GIT_USER: ${{ github.actor }}
-          GIT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           USE_SSH: false
+          GIT_USER: github-actions[bot]
         run: npx docusaurus deploy
