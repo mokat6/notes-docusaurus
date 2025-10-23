@@ -4,4 +4,5 @@ heree
 herjere
 
 comment out
-matas buzzelis
+matas buzzelis  
+deploy from local
