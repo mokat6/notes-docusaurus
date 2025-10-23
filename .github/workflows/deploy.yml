@@ -30,6 +30,10 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
+      - name: Setup Git remote for deployment
+        run: |
+          git remote set-url origin https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
+
       - name: Deploy to GitHub Pages
         env:
           GIT_USER: ${{ github.actor }}
