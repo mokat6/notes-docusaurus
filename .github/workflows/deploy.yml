@@ -1,52 +1,51 @@
-name: Deploy Docusaurus site to GitHub Pages
+name: Deploy to GitHub Pages
 
 on:
   push:
     branches:
-      - master
-  workflow_dispatch:
+      - main
+    # Review gh actions docs if you want to further define triggers, paths, etc
+    # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#on
 
 jobs:
-  deploy:
+  build:
+    name: Build Docusaurus
     runs-on: ubuntu-latest
-
-    permissions:
-      contents: write # needed to push to gh-pages branch
-
     steps:
-      # Step 1: Checkout the repo
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      # Step 2: Setup Node.js
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: npm
 
-      # Step 3: Install dependencies
       - name: Install dependencies
         run: npm ci
+      - name: Build website
+        run: npm run build
 
-      # Step 4: Setup Git user
-      - name: Setup Git user
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-
-      # Step 5: Setup SSH agent with deploy key
-      - name: Setup SSH
-        uses: webfactory/ssh-agent@v0.8.1
+      - name: Upload Build Artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          ssh-private-key: ${{ secrets.DEPLOY_KEY }}
+          path: build
 
-      # Step 6: Ensure SSH is used for the Git remote
-      - name: Set Git remote to SSH
-        run: git remote set-url origin git@github.com:${{ github.repository }}.git
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build
 
-      # Step 7: Deploy with Docusaurus
+    # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
+    permissions:
+      pages: write # to deploy to Pages
+      id-token: write # to verify the deployment originates from an appropriate source
+
+    # Deploy to the github-pages environment
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+    steps:
       - name: Deploy to GitHub Pages
-        env:
-          USE_SSH: true
-          GIT_USER: github-actions[bot]
-        run: npm run deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
