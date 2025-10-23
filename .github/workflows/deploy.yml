@@ -1,44 +1,30 @@
-name: Deploy Docusaurus to GitHub Pages
+name: Deploy Docusaurus site to GitHub Pages
 
 on:
   push:
-    branches: [master]
+    branches:
+      - master
   workflow_dispatch:
-
-permissions:
-  contents: write # allows push to gh-pages
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
 
-      - name: Install dependencies
-        run: npm ci
+      - run: npm ci
 
-      - name: Build & Deploy
-        env:
-          USE_SSH: false
-          GIT_USER: github-actions[bot]
-          GIT_EMAIL: github-actions[bot]@users.noreply.github.com
-        run: |
-          # Docusaurus deploy clones gh-pages itself → we patch the command
-          npx docusaurus deploy -- --no-push || (
-            # If push fails, manually configure git in the temp folder and push
-            TEMP_DIR=$(ls -d /tmp/notes-docusaurus-gh-pages*/ | head -1)
-            cd "$TEMP_DIR"
-            git config user.name "$GIT_USER"
-            git config user.email "$GIT_EMAIL"
-            git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
-            git add -A
-            git commit -m "Deploy website - based on ${{ github.sha }}" --allow-empty
-            git push --force origin gh-pages
-          )
+      - run: npm run build
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v5
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build
+          # optional
+          user_name: github-actions[bot]
+          user_email: github-actions[bot]@users.noreply.github.com
