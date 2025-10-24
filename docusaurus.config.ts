@@ -88,9 +88,9 @@ const config: Config = {
     [
       "@docusaurus/plugin-content-docs",
       {
-        id: "js", // 👈 unique ID for this docs instance
-        path: "js", // 👈 folder you created
-        routeBasePath: "js", // URL base path
+        id: "lowLevel", // 👈 unique ID for this docs instance
+        path: "notes/low-level", // 👈 folder you created
+        routeBasePath: "low-level", // URL base path
         sidebarPath: "./sidebars.ts", // 👈 separate sidebar file
       },
     ],
@@ -135,8 +135,8 @@ const config: Config = {
           type: "docSidebar",
           sidebarId: "tutorialSidebar", // must match the sidebar ID from your sidebars file
           position: "left",
-          label: "js",
-          docsPluginId: "js", // 🔑 tell Docusaurus which docs instance
+          label: "Low-level",
+          docsPluginId: "lowLevel", // 🔑 tell Docusaurus which docs instance
         },
         {
           type: "docSidebar",
