@@ -1,0 +1,48 @@
+---
+title: css grid
+tags: [css]
+---
+
+import Line from "./img/terms-grid-line.svg";
+import Cell from "./img/terms-grid-cell.svg";
+import Track from "./img/terms-grid-track.svg";
+import Area from "./img/terms-grid-area.svg";
+
+import ImgCaptionFlexWrap from "@site/src/components/ImgCaptionFlexWrap";
+
+# grid
+
+```css
+display: "grid";
+grid-template-columns: "1fr 1fr 1fr";
+grid-template-rows: "1fr 1fr";
+```
+
+can rearrange order
+
+- Grid Container. Direct parent of all the grid items.
+- Grid Item. `Div`s (usually) Direct descendants of the grid container. Not the sub descendents.
+
+<ImgCaptionFlexWrap>
+  {[
+    { text: "Grid Line. Inner lines dividing container. Can be column lines, row lines", img: Line },
+    { text: "Grid Cell. grid cell between row grid lines 1 and 2, and column grid lines 2 and 3", img: Cell },
+    { text: "Grid Track. columns or rows. Track between the second and third-row grid lines.", img: Track },
+    {
+      text: "Grid Area. The total space surrounded by four grid lines. Between row grid lines 1 and 3, and column grid lines 1 and 3",
+      img: Area,
+    },
+  ]}
+</ImgCaptionFlexWrap>
+
+useful:  
+grid-template-columns  
+grid-template-rows  
+column-gap  
+row-gap
+
+justify-content: space-evenly;
+
+not useful:  
+grid-template-areas - not really used...  
+naming row/column lines... not used, not practical in React projects....
