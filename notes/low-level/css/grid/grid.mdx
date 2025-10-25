@@ -40,9 +40,83 @@ grid-template-columns
 grid-template-rows  
 column-gap  
 row-gap
-
+repeat(auto-fill, minmax(...))  
 justify-content: space-evenly;
 
 not useful:  
 grid-template-areas - not really used...  
 naming row/column lines... not used, not practical in React projects....
+
+grid item:  
+justify-self  
+align-self
+place-self is a shorthand of align and justify.
+
+### sizing
+
+_Units_  
+px, rem, %, ...  
+fr  
+min-content
+max-content
+auto - weaker than fr
+
+### sizing functions
+
+fit-content() - uses space `min-content < fit-content() < max-content`
+minmax() - sets both min, and max. like minWidth and maxWidth
+
+```js
+grid-template-columns: minmax(100px, 1fr) 3fr;
+```
+
+min() - just min  
+max() - just max
+
+### repeat()
+
+```css
+grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+grid-template-columns: repeat(8, 1fr);
+grid-template-columns: repeat(8, minmax(10px, 1fr));
+```
+
+first arg, is the number of repeats  
+auto-fit  
+auto-fill
+
+# GOAT
+
+```css
+grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+
+grid-template-columns: repeat(auto-fill, minmax(min(10rem, 100%), 1fr));
+
+<div class="grid gap-4 grid-cols-[repeat(auto-fit,minmax(250px,1fr))]">
+
+```
+
+good idea for website
+header - main - footer > use flexbox
+main if it has sidebar + main + ad or sth. use grid. easier to fix px. and make it responsive
+
+```html
+<div class="flex min-h-screen flex-col">
+  <header class="sticky top-0 h-33 bg-gray-500 p-4 text-white">
+    Header <br />
+    asd
+  </header>
+  <main class="grid min-h-0 flex-1 grid-cols-1 sm:grid-cols-[200px_1fr] md:grid-cols-[200px_1fr_100px] gap-4">
+    <aside class="bg-gray-200 p-4 ">Sidebar</aside>
+    <div class="bg-blue-200 p-4 ">Main content</div>
+
+    <aside class=" bg-pink-200 p-4 sm:col-span-2 md:col-span-1">Ads</aside>
+  </main>
+
+  <footer class="bg-black/50 p-4">Footer</footer>
+</div>
+
+<div class>ass</div>
+```
+
+you can also do `grid-cols-12` like the classic bootstrap grid. But fixed 200px for side is better!
