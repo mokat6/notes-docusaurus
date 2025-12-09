@@ -1,0 +1,57 @@
+import Mounting from "@site/src/components/react/mounting/Mounting";
+import EffectObjParent from "@site/src/components/react/effect/EffectObjParent";
+
+# (un) mounting
+
+You can't unmount a component from inside of it.  
+Local state in state and ref gets reset on mount. Start fresh. Let variable keeps value, outside of React scope.
+
+```js
+useEffect(() => {
+  console.log("Child mounts");
+  return () => console.log("Child __ unmounting _!! lol");
+}, []);
+```
+
+<Mounting />
+
+# Navigate w/ React Router
+
+If you navigate to a different route with React Router, if it's within the same subroute,
+the component is still mounted, it remains mounted.
+
+```js
+useEffect(() => {
+  return () => `RUNS NOT ONLY AT UNMOUNT`);
+}, [actionData]);
+```
+
+This runs each time actionData changes + on unmount.  
+If object in dependency array, rerun when the reference changes. Also becomes undefined.  
+actionData each time gives you a new object (immutability). So it always reruns.
+
+---
+
+# Passing an object into a child component.
+
+```js
+// 1. defined outside the component, in function modified key. Still no run effect
+const outsideObj = { location: "outside the function" };
+outsideObj.location = Math.random() + "";
+
+// 2.
+const memoObj = useMemo(() => ({ location: "in useMemo" }), []);
+
+// 3. inside func component body
+const bodyInlineObj = { location: "just in function body" };
+```
+
+<EffectObjParent />
+
+Child has
+
+```js
+useEffect(() => {
+  console.log("useEffect body, obj > ", obj);
+}, [obj]);
+```

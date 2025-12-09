@@ -46,4 +46,4 @@ Rationale, why need it? not much.... just...
 1. single import, instead of two (useContext, and the actual ThemeContext instance)
 2. instead of const context = useContext(ThemeContext); we just do - const context = useTheme()
 3. also probably better discriptive naming.
-4. Does error checking, if it is undefined, means you've used it wrong, outside of the <instance.Provider>
+4. Does error checking, if it is undefined, means you've used it wrong, outside of the `<instance.Provider>`
