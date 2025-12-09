@@ -37,7 +37,7 @@ actionData each time gives you a new object (immutability). So it always reruns.
 ```js
 // 1. defined outside the component, in function modified key. Still no run effect
 const outsideObj = { location: "outside the function" };
-outsideObj.location = Math.random() + "";
+outsideObj.location = Math.random() + ""; // in component body
 
 // 2.
 const memoObj = useMemo(() => ({ location: "in useMemo" }), []);

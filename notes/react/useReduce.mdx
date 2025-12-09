@@ -1,0 +1,69 @@
+import ReducerExample from "@site/src/components/react/useReducer/ReducerExample";
+
+Both useState and useReducer allow you to do the same thing: store state, update state, state is reactive.
+Difference? you can encapsulate more stuff with useReducer.
+
+<ReducerExample />
+
+state and action types
+
+```ts
+interface State {
+  count: number;
+  error: string | null;
+}
+
+interface Action {
+  type: "increment" | "decrement";
+  payload?: null;
+}
+```
+
+Take in the state, take in the action, make a copy of the state  
+Based on the action, do the hokey pokey, like in actionFunction  
+return the updated copy of the state. Don't mutate the OG state.
+
+Reducer function
+
+```ts
+function reducer(state: State, action: Action) {
+  const { type } = action;
+
+  switch (type) {
+    case "increment": {
+      const newCount = state.count + 1;
+      const hasError = newCount > 5;
+
+      return { ...state, count: hasError ? state.count : newCount, error: hasError ? "Maximum reached" : null };
+    }
+    case "decrement": {
+      const newCount = state.count - 1;
+      const hasError = newCount < 0;
+
+      return { ...state, count: hasError ? state.count : newCount, error: hasError ? "Minimum reached" : null };
+    }
+
+    default:
+      return state;
+  }
+}
+```
+
+Component
+
+```tsx
+function Page1() {
+  const [state, dispatch] = useReducer(reducer, { count: 0, error: null });
+
+  return (
+    <div>
+      {state.count}
+      {state.error && <p className="text-red-500">{state.error}</p>}
+      <div className="flex gap-8 border">
+        <button onClick={() => dispatch({ type: "increment" })}>increment</button>
+        <button onClick={() => dispatch({ type: "decrement" })}>decrement</button>
+      </div>
+    </div>
+  );
+}
+```
