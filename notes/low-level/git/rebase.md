@@ -18,3 +18,14 @@ git stash pop
 ```
 
 You're putting your changes on top.
+
+---
+origin feature vs origin/feature
+```shell
+git pull origin feature
+# also
+git pull --rebase origin feature
+
+git fetch origin
+git rebase origin/feature
+```
