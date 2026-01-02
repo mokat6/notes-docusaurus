@@ -1,0 +1,88 @@
+import { Reconciliation1 } from "@site/src/components/react/tricks/reconciliation";
+import CodeSideBySide from "@site/src/components/CodeSideBySide";
+
+# Reconciliation
+
+React holds the old state as virtual DOM.  
+When it rerenders it creates a new instance as virtual DOM.  
+Then it compares
+
+```tsx
+
+  const [isCompany, setIsCompany] = useState(false);
+
+  return (
+    <>
+     <Checkbox />
+        {isCompany ? (
+          <>
+            Company tax id
+            <input  />
+          </>
+        ) : (
+          <>
+            Person tax id
+            <input  />
+          </>
+        )}
+      </>
+```
+
+<Reconciliation1 />
+
+Enter some text in the input. Toggle the checkbox. The input value doesn't reset. Why?  
+React thinks it's the same component, the same input.
+
+<CodeSideBySide>
+  {[
+{type: 'text', content: `Before re-render, isCompany false, Jsx > js`
+},
+
+{type: 'text', content: "After re-render, isCompany true, Jsx > js"
+},
+
+{type: 'code', language:'python', content:
+`{
+   type: "form",
+   props: {
+     children: [
+       {type: Checkbox, ...},
+       { type: "input", ...}
+     ]
+   }
+}`
+},
+
+{type: 'code', language:'python', content:
+`{
+   type: "form",
+   props: {
+     children: [
+       {type: Checkbox, ...},
+       { type: "input", ...}
+     ]
+   }
+}`
+},
+]}
+
+</CodeSideBySide>
+
+React thinks `input` is the same, so it doesn't remount, it keeps the same element, updates props if needed.  
+If you want the `<input />` to be remounted and state reset, provide a key.  
+Or change conditional rendering
+
+```json
+ {isCompany ? ( <> Company tax id <input  />  </>) : null}
+ {isCompany ?  null : (<> Person tax id <input  />  </>)}
+```
+
+This way the children array has 3
+
+```python
+ children: [
+       {type: Checkbox, ...},
+       { type: "input", ...},
+       null
+     ]
+```

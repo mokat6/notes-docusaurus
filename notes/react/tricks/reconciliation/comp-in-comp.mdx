@@ -1,0 +1,62 @@
+import { ComponentInComponent } from "@site/src/components/react/tricks/reconciliation";
+import CodeSideBySide from "@site/src/components/CodeSideBySide";
+
+# Component in Component
+
+Reason - reconciliation
+
+<ComponentInComponent />
+
+```tsx
+export const ComponentInComponent = () => {
+  const [, rerender] = useReducer((x) => x + 1, 0);
+
+  const Stupid = () => {
+    // useEffect, mount/unmount logs
+    return <div>Hello there, I'm Stupid</div>;
+  };
+
+  return (
+    <>
+      <Stupid />
+      <button onClick={rerender}>Re-render parent</button>
+    </>
+  );
+};
+```
+
+When React does reconciliation, it sees two different components, both old and new. Stupid was just created in the comp function body.
+It has a different reference. React thinks different component, unmounts old mounts new
+
+<CodeSideBySide>
+  {[
+{type: 'text', content: `Before re-render`
+},
+
+{type: 'text', content: "After re-render"
+},
+
+{type: 'code', language:'python', content:
+`{
+   type: ComponentInComponent,
+   props: {
+     children: [
+       {type: Stupid, ...}
+     ]
+   }
+}`
+},
+
+{type: 'code', language:'python', content:
+`{
+   type: ComponentInComponent,
+   props: {
+     children: [
+       {type: Stupid, ...}
+     ]
+   }
+}`
+},
+]}
+
+</CodeSideBySide>

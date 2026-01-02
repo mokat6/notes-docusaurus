@@ -1,0 +1,50 @@
+```tsx
+const Something = () => {
+  // bla-bla
+};
+
+const PureSomething = React.memo(Something);
+```
+
+same as
+
+```tsx
+class PureSomething extends PureComponent {
+  render() {
+    // bla-bla
+  }
+}
+```
+
+## shouldComponentUpdate lifecycle method
+
+```tsx
+class PureSomething extends PureComponent {
+  // re-render component only when the method returns true
+  shouldComponentUpdate(nextProps) {
+    return nextProps.bla !== this.props.bla;
+  }
+
+  render() {
+    // bla-bla
+  }
+}
+```
+
+Same with functional components - custom comparison function
+
+```tsx
+const Something = () => {
+  // bla-bla
+};
+
+// same as shouldComponentUpdate just in reverse
+const customComparisonFunction = (oldProps, newProps) => {
+  return oldProps.bla === newProps.bla;
+};
+
+const PureSomething = React.memo(Something, customComparisonFunction);
+```
+
+Better use composition to prevent re-renders. Memo is the last resort!
+Much more robust, predictable, no code polution with chains of useMemo, useCallback.

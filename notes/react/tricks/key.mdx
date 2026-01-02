@@ -1,0 +1,45 @@
+# Key
+
+Remounting:
+
+- Bad performance
+- Local state disappears
+- Focus disappears
+
+Each time parent re-renders, every list item is unmounted and mounted again
+
+```tsx
+data.map((item) => <p key={uuid()}>{item.name}</p>);
+```
+
+Key doesn't prevent from re-renders. It prevents from re-mounting.  
+You can memo the list item component to prevent from re-rendering.
+
+```tsx
+const KittenItemMemo = React.memo(KittenItem);
+
+data.map((kitten) => <KittenItemMemo value={kitten} key={kitten.id} />);
+```
+
+No key, what happens
+
+```tsx
+const data = ["Mittens", "Grumpy", "Mr. Scratch"];
+
+data.map((kitten) => <KittenItem value={kitten} />);
+```
+
+if next re-render
+
+```tsx
+const data = ["Badger", "Mittens", "Grumpy", "Mr. Scratch"];
+data.map((kitten) => <KittenItem value={kitten} />);
+```
+
+It will mount "Mr. Scratch" the last one. And re-render the first 3 with changed props. Which is wrong. If there's state in the list item
+component, it will get confused.
+
+# ok to use index as key
+
+- Array is static (no add, remove, re-order of items)
+- Array is dynamic, but no local state and React.memo in items. (about memo, you will lose memo, will re-render)

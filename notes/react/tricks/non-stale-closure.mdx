@@ -1,0 +1,32 @@
+import Closure1 from "@site/src/components/react/tricks/non-stale-closure";
+
+# Non stale closure
+
+State is updated a lot
+
+```tsx
+const [s1, setS1] = useState("0");
+console.log("s1   ", s1);
+
+const s1Ref = React.useRef(s1);
+s1Ref.current = s1;
+
+const cb = useCallback(() => {
+  console.log("cb > ", s1Ref.current);
+}, []);
+
+return (
+  <>
+    <input className="border" value={s1} onChange={(e) => setS1(e.target.value)} />
+    <div>closure1</div>;
+    <C1m cb={cb} />
+  </>
+);
+```
+
+<Closure1 />
+
+The heavy component does not re-render when parent re-renders. Because of useCallback.  
+The closure is not stale because we pass in the ref.
+
+Even better solution, don't use useState. Just update the `ref` straight in `onChange`. Also make the input uncontrolled.

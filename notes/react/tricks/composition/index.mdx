@@ -1,0 +1,116 @@
+# Composition patterns
+
+Composition > memoization
+
+1. Isolate state changes
+2. If you have component with state, try to make sure this component doesn't render unnececary children
+
+React only re-renders a component when its parent re-executes and creates a new element for it.
+
+So the real question is not:
+“Did the parent re-render?”
+
+but:
+“Did the parent create a new React element for this child?”
+
+Re-render is like update. ShouldComponentUpdate?  
+when inline every parent re-render reproduces
+
+```js
+{ type: VerySlowComponent, props: {}, key: null }
+```
+
+React thinks, same type, so I don't remount, just rerender, update it... Function execution
+
+---
+
+When passed in via props
+
+```jsx
+const element = <VerySlowComponent />;
+
+<Layout column={element} />;
+```
+
+Now when Layout re-runs:
+
+```jsx
+{
+  column;
+}
+```
+
+React sees:
+
+```jsx
+prevElement === nextElement; // true
+```
+
+“Nothing changed here → I can skip”
+So:
+
+- Fiber reused
+- Function not called
+- No reconciliation below
+
+“Same type” is NOT enough
+React does not say:
+“Oh, it’s VerySlowComponent again, so I can skip.”
+
+Same type, different props → must re-run.
+So React uses a stricter rule:
+Same element identity, not just same type
+
+So React’s default rule is:
+
+New element → re-run
+Same element → skip
+
+:::tip
+React doesn’t re-run children because the parent re-rendered — it re-runs children because the parent created new elements for them.
+:::
+
+Critical difference (this is the part to internalize)
+Slot composition avoids the problem - You never create a new element.
+
+React.memo fixes the problem
+You do create a new element, then React tries to bail out.
+
+---
+
+Re-render === component update
+
+Why re-render happen? it all starts with state change
+Then React propages this update beyond the component holding that state.
+Component re-renders, because its parent re-renders.
+
+2. Context value changes (or state management Redux, value changed)
+
+make an example, prop drill vs context
+
+:::warning
+Myth - A component re-reenders when its props change, not true!
+:::
+
+Component re-renders when it's parent re-renders. If prop values change, it just passes new values,
+if the prop values don't change, still re-renders with same values.
+
+```jsx
+const COmponent = () => {
+  let value = "1";
+
+  return (
+    ...
+    <button onClick={() => {value = 2}}>
+    ...
+    <Child value={value}> />
+  )
+}
+```
+
+no re-renders! child component re-renders, when parent re-renders. If the value has changed, it will just pass that value to the Child, but it doesn't mean the
+child re-render was triggered by the prop change.
+
+React only notices prop changes when it is re-rendering. Re-render triggered by useState or sth.  
+Parent re-renders, triggered by setValue. Re-renders children components, as it does. Children prop value changed or not changed, that doesn't matter.  
+Props only matter for re-render talk when using memoization.

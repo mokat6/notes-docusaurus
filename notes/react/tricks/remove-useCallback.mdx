@@ -1,0 +1,62 @@
+# When it makes sense to have useCallback
+
+If parent component re-renders, all children re-render too, unless they are memoized, and children props don't change.
+
+What it does?  
+Stabilizes reference identity
+
+What it's good for.
+
+1. When child component is wrapped in `React.memo()`
+2. And sometimes when
+
+```tsx
+useEffect(() => {
+  doSomething(onClickCallback);
+}, [onClickCallback]);
+```
+
+Creating a new function in JS = extremely cheap.  
+Using useCallback does more work that just creating the function.
+Don't use useCallback to "avoid recreating functions!!!"
+
+```tsx
+const Component = () => {
+  const onClick = useCallback(() => {
+    // do something
+  }, []);
+
+  return <button onClick={onClick}>click me</button>;
+};
+```
+
+the `<button>` will re-render when parent re-renders. Because it's not memoized. You can't memoize DOM element.
+
+```tsx
+const MemoItem = React.memo(Item);
+
+const Component = () => {
+  const onClick = useCallback(() => {
+    // do sth
+  }, []);
+
+  return (
+    <MemoItem onClick={onClick}>
+      <div>something</div>
+    </MemoItem>
+  );
+  // same as
+  <MemoItem onClick={onClick} children={<div>something</div>} />;
+};
+```
+
+Memoization does nothing here because of the `children`. Like a non memoized object that always has a new reference.
+You would have to memoize the children
+
+```tsx
+const child = useMemo(() => <div>sth</div>, []);
+
+return <MemoItem onClick={onClick}>{child}</MemoItem>;
+```
+
+Only memoize if you notice your app is too slow. Say no to premature optimizations!

@@ -1,0 +1,34 @@
+import CompositionWithChildren from "@site/src/components/react/tricks/composition-children-no-rerender";
+
+# Isolate state in wrapper
+
+<CompositionWithChildren />
+
+```jsx
+const Parent = () => {
+  return (
+    <>
+      <ComponentWithScroll>
+        <HeavyComponent />
+      </ComponentWithScroll>
+      <button>re-render parent</button>
+    <>
+  );
+};
+```
+
+The state `scrollY` is changing in the wrapper only. Not re-rendering the heavy component.  
+When parent re-renders, both wrapper and HeavyComponent re-render.
+
+```jsx
+const ComponentWithScroll = ({ children }) => {
+  const [scrollY, setScrollY] = useState(0);
+  console.log("ComponentWithScroll renders >> ", scrollY);
+  const onScroll = ({ currentTarget }) => setScrollY(currentTarget.scrollTop);
+
+  return <div onScroll={onScroll}>{children}</div>;
+};
+```
+
+Why? - children are immutable React element objects passed by reference  
+They are values, not templates.

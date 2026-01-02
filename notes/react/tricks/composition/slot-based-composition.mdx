@@ -1,0 +1,66 @@
+import { Component, ComponentFixed } from "@site/src/components/react/tricks/layout-props-components";
+
+# Slot-based composition
+
+A.k.a Lifting element creation up
+
+## Bad case
+
+Everytime you toggle sidebar, both heavy components re-render.
+
+<Component />
+
+```jsx
+const Component = () => {
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
+  return (
+    <div className="container">
+      <div className="sidebar" style={{ width: isCollapsed ? 10 : "auto" }}>
+        <VerySlowComponent />
+      </div>
+      <div className="content">
+        <button
+          onClick={() => {
+            setIsCollapsed(!isCollapsed);
+          }}
+        />
+        <BunchOfSlowStuff />
+      </div>
+    </div>
+  );
+};
+```
+
+## Fixed
+
+Toggle sidebar, heavy components don't re-render.  
+Same logic as children, children is also just a prop.
+
+<ComponentFixed />
+
+```jsx
+const Layout = ({ column, content }) => {
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
+  return (
+    <div className="container">
+      <div className="sidebar" style={{ width: isCollapsed ? 10 : "auto" }}>
+        {column}
+      </div>
+      <div className="content">
+        <button
+          onClick={() => {
+            setIsCollapsed(!isCollapsed);
+          }}
+        />
+        {content}
+      </div>
+    </div>
+  );
+};
+
+const Component = () => {
+  return <Layout column={<VerySlowComponent />} content={<BunchOfSlowStuff />} />;
+};
+```

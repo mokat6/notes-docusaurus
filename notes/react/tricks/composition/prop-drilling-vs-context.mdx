@@ -1,0 +1,49 @@
+import PropDrilling from "@site/src/components/react/tricks/context/prop-drilling";
+import Context1 from "@site/src/components/react/tricks/context/context1";
+import Context2 from "@site/src/components/react/tricks/context/context2";
+import Context3 from "@site/src/components/react/tricks/context/context3";
+import Context4 from "@site/src/components/react/tricks/context/context4";
+import Context5 from "@site/src/components/react/tricks/context/context5";
+
+<PropDrilling />
+
+Normal prop drilling. Everything re-renders.
+
+---
+
+<Context1 />
+
+```
+App (top-level)
+ └─ Context.Provider (state here)
+      └─ Page/Layout (React.memo, no props)
+           ├─ Subscriber1 (uses context)
+           ├─ Subscriber2 (uses context)
+           └─ StaticComponent (doesn't rerender)
+
+```
+
+---
+
+<Context2 />
+
+```
+App
+ └─ ThemeContext.Provider
+      └─ Layout (React.memo, static slots)
+           ├─ Sidebar (heavy, never re-renders)
+           ├─ Content (heavy, never re-renders)
+           └─ DeepChild (subscribes to context)
+```
+
+---
+
+<Context3 />
+
+---
+
+<Context4 />
+
+---
+
+<Context5 />

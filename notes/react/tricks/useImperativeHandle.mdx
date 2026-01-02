@@ -1,0 +1,53 @@
+import ImperativeHandle from "@site/src/components/react/tricks/useImperativeHandle";
+
+# useImperativeHandle
+
+<ImperativeHandle />
+
+## Parent
+
+```tsx
+const apiRef = useRef<ChildApi>(null);
+
+const onClick = () => {
+  apiRef.current?.focus();
+  apiRef.current?.shake();
+};
+
+return (
+  <>
+    <Child apiRef={apiRef} />
+    <button onClick={onClick}>do it</button>
+  </>
+);
+```
+
+## Child
+
+```tsx
+export interface ChildApi {
+  focus(): void;
+  shake(): void;
+}
+
+const Child = ({ apiRef }: { apiRef: React.Ref<ChildApi> }) => {
+  const internalRef = useRef<HTMLInputElement>(null);
+
+  useImperativeHandle(
+    apiRef,
+    () => ({
+      focus: () => {...},
+      shake: () => {...},
+    }),
+    []
+  );
+
+  return (
+    <div>
+      <input ref={internalRef} />
+    </div>
+  );
+};
+```
+
+Instead of `useImperativeHandle`, you can do the same in a `useEffect` and it will be the same.

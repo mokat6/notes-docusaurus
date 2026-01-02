@@ -1,0 +1,16 @@
+# Moving state down
+
+```tsx
+const [isOpen, setIsOpen] = useState(false);
+
+return (
+  <Something>
+    {isOpen && <ModalDialog />}
+    <Button onClick={() => setIsOpen(true)}>Open dialog</Button>
+    <VerySlowComponent />
+    <BunchOfSlowStuff />
+  </Something>
+);
+```
+
+Bad example! move state down.
