@@ -4,6 +4,7 @@ import Context2 from "@site/src/components/react/tricks/context/context2";
 import Context3 from "@site/src/components/react/tricks/context/context3";
 import Context4 from "@site/src/components/react/tricks/context/context4";
 import Context5 from "@site/src/components/react/tricks/context/context5";
+import Context6 from "@site/src/components/react/tricks/context/context6";
 
 <PropDrilling />
 
@@ -47,3 +48,37 @@ App
 ---
 
 <Context5 />
+
+---
+
+<Context6 />
+
+Before (Context4 or 3) - we had context provider's state right in the parent, where it renders PageMemo.
+
+Now context state is within `<ContextProvider>` layers. Context state is isolated using the
+`Wrap state around children` pattern.  
+Now memoization isn't needed, and it's okay for the central component to have props. The paren't is never re-rendering anyway.
+
+```jsx
+<ContextProvider>
+   <Layout heavyContent={content} >
+</ContextProvider>
+```
+
+I could also do this, if there's only one component slot
+
+```jsx
+<ContextProvider>
+  <DashboardLayout>
+    <Content />
+  </DashboardLayout>
+</ContextProvider>
+```
+
+or
+
+```jsx
+<DashboardLayout sidebar={<Sidebar />}>
+  <Content />
+</DashboardLayout>
+```
