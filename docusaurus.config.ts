@@ -168,6 +168,11 @@ const config: Config = {
       theme: prismThemes.github,
       darkTheme: prismThemes.dracula,
     },
+    docs: {
+      sidebar: {
+        hideable: true,
+      },
+    },
   } satisfies Preset.ThemeConfig,
 };
 

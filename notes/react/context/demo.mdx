@@ -1,0 +1,137 @@
+---
+hide_table_of_contents: true
+---
+
+import SideBySide from "@site/src/components/SideBySide";
+import ContextDemo from "@site/src/components/context/demo/context-demo";
+
+# Context demo
+
+`React.createContext` must live outside a component. at module scope.
+
+```tsx
+export const ThemeContext = React.createContext(...)
+```
+
+<SideBySide>
+<span>Code</span>
+<span>Render </span>
+
+```tsx
+const AssContext = React.createContext("default value, in case no prodiver, check it.");
+
+const page = () => {
+  // could declare const [x, setX] = useState()
+  // pass it into Provider value
+  return (
+    <>
+      {/* sec1, has provider value */}
+      <AssContext.Provider value="switcharoooo">
+        <Section1 />
+      </AssContext.Provider>
+      {/* sec2, no provider. hook */}
+      <Section1 />
+      {/* sec2, no provider. old school */}
+      <Section2 />
+    </>
+  );
+};
+
+const Section1 = () => {
+  const ass = useContext(AssContext);
+  return (
+    <div>
+      <h1>Section1</h1>
+      <p>{ass}</p>
+    </div>
+  );
+};
+
+const Section2 = () => {
+  return (
+    <div>
+      <h1>Section2</h1>
+      <AssContext.Consumer>
+        {(ass) => {
+          return <p>{ass}</p>;
+        }}
+      </AssContext.Consumer>
+    </div>
+  );
+};
+```
+
+<ContextDemo />
+
+</SideBySide>
+
+Context provider can be inserted multiple times in multiple levels to change the value for consumer.
+
+## Add slick abstractions
+
+```tsx
+type AssContextType = {
+  state: string;
+  setState: React.Dispatch<React.SetStateAction<string>>;
+} | null;
+
+const AssContext = React.createContext<AssContextType>(null);
+
+const AssProviderlol = ({ children }: PropsWithChildren) => {
+  const [state, setState] = useState("now this is first state");
+
+  return <AssContext.Provider value={{ state, setState }}>{children}</AssContext.Provider>;
+};
+
+const useAss = () => {
+  const ass = useContext(AssContext);
+  if (!ass) throw "ass used outside of provider";
+  return ass;
+};
+```
+
+<SideBySide>
+<span> Good. `ass.state` is not null</span>
+<span> TS error. `ass.state` might be null</span>
+
+```tsx
+const ass = useAss();
+return (
+  <div>
+    <h1>Section1</h1>
+    <p>{ass.state}</p>
+  </div>
+);
+```
+
+```tsx
+<div>
+  <h1>Section2</h1>
+  <AssContext.Consumer>
+    {(ass) => {
+      return <p>{ass.state}</p>;
+    }}
+  </AssContext.Consumer>
+</div>
+```
+
+</SideBySide>
+
+## Re-renders
+
+When context state changes, all components that call `useAss()` re-render.
+
+Implications.  
+Can't put big global state store in context.
+
+```
+{
+  theme, language, userName, currency, showSideNav
+}
+```
+
+Because one item changes, all components that call `useAss()` re-render. Not only ones that need `currency`, or `showSideNav`
+
+Solutions:  
+Split context. 1 for theme, 1 for user, 1 for language... etc  
+Install global store dependency. Allows to subscribe per field.
