@@ -1,0 +1,307 @@
+We can assign jobs to any of the `Gitlab predefined` stages without defining them manually:
+
+```yaml
+stages:
+  - .pre
+  - build # no, old info
+  - test # no
+  - deploy # no
+  - .post
+```
+
+Upload artifacts. If folder not found. Gives warning, job succeeds still.
+
+Terminology:
+
+- Feature branch
+- Artifact branch
+
+## structure the pipeline
+
+Fail early.
+Similar length jobs in same stages. Lint 30 sec, build 5 min, bad.
+
+## Rules
+
+Use `rules` to exclude or include the job. Use predefined variables to make a condition
+https://docs.gitlab.com/ci/variables/predefined_variables/
+`CI_COMMIT_REF_NAME`
+
+Rules docs  
+https://docs.gitlab.com/ci/yaml/#rules
+
+# 2 types of pipelines
+
+1. Branch pipelines (normal one, on push commit)
+2. Merge request pipeline
+3. Tag pipeline
+
+Any job with `rules` doesn't have configuration that excludes the job from the Merge Request pipeline.
+When we start adding `rules`, we override default rules that would say the job shouldn't be part of the pipeline. If no job is in the pipeline, the pipeline doesn't exist.
+
+workflow. Disable our pipeline, unless it's `main`
+
+# Configure jobs/pipelines to run based on file changes, no NX
+
+```yml
+job:
+  rules:
+    - if $CI_PIELINE_SOURCE = "merge_request_event"
+      changes:
+        - "*.js*
+
+```
+
+Branch pipeline. Gitlab will create a pipeline every time you push changes to a branch.
+Merge request pipeline. creates a merge request pipeline on MR.
+
+# deployment link in GUI
+
+Doesn't work anymore
+
+```
+reports:
+      dotenv: deploy.env
+```
+
+# environments
+
+static environments: prod, staging, uat
+dynamic environemnts: preview, link is random 3r2io3jdwlede.netlify.com
+
+when you set the `environment:` key, you imply to GitLab that you are deploying from this job. If you're not, don't use `environment:`
+
+# Build your Docker image
+
+Speed up your pipeline by not installing `jq` `netlify cli tool` etc.  
+Have a job that builds a docker image, and stores in gitlab image registry.  
+Run this job only sometimes, on a schedule, like once a month or less.
+
+# advanced tricks
+
+```yml
+some_job:
+  retry: 2 # max two
+```
+
+```yml
+some_job
+  allow_failure: true  # pipeline doesn't fail if the job fails
+```
+
+### Anchor and alias
+
+```yml
+.job_I_want_to_anchor: &my_job_template
+  image: alpine
+  before_script:
+    - echo "Installing dependencies"
+
+job_1:
+  <<: *my_job_template
+  script:
+    - echo "Job 1"
+```
+
+This is a yml feature, not gitlab pipeline.
+
+### run in the background
+
+```yml
+script:
+  - serve build/ &
+  - sleep 3 # naive await. 3 seconds
+  - curl http://localhost:3000 | grep "My website" # now this will execute because serve build is in the background
+```
+
+### Multiline script item
+
+```yml
+script:
+  - |
+    curl http://.... \
+    -H ...
+
+  # or
+  - chmod +x script.sh
+  - ./script.sh
+```
+
+### Gitlab pages
+
+```yml
+job:
+  stage: deploy_hahaha
+  pages: true # assumes artifact in ./public/index.html
+  # or
+  pages:
+    publish: next_output    # instead of pubnlish/
+```
+
+Dont need a completely new job just for publish to pages.
+
+### skip git clone
+
+Some jobs don't need source files. Like deploy from artifacts
+
+```yml
+variables:
+  GIT_STRATEGY: none #override. Original is in settings > CI/CD > git strategy
+```
+
+### disable artifact download
+
+```yml
+dependencies: []
+```
+
+means no dependencies, don't need to download artifacts. Otherwise dependencies you can put job name  
+e.g. in unit test job
+
+```yml
+test_release_notes:
+  dependencies:
+    - release_note_job
+```
+
+Say previous stage has 2 jobs both with dependencies. Release notes and build. For this job I need only release_notes_job artifacts
+
+Default behavior = always download all artifacts from all previous stages
+
+### needs
+
+Execute jobs out-of-order. Ignore stage ordering.
+
+```yml
+unit_test:
+  stage: test
+  needs: [] # doesn't need anything, it starts right away, in stage 2
+
+test_app:
+  stage: test
+  needs:
+    - build_app # as soon as build_app finishes in stage 1, this starts in stage 2. Other jobs in stage 1 continue to run.
+```
+
+Optimization. Might be harder to debug.  
+Default is wait until a stage finishes, then the next stage
+
+Gotcha:  
+Only artifacts from needs array are downloaded. Indirect job artifacts don't get downloaded. Just add in needs.
+
+```yml
+deploy:
+  needs:
+    - job: build_app
+    - job: test_app # doesn't produce artifacts
+    - job: unit_tests
+      artifacts: false # don't download these artifacts
+```
+
+So called `stageless pipeline`. Speeds up pipeline execution time.
+
+# cache
+
+Two jobs do `npm ci`. First job downloads node_modules and caches it.
+
+```yml
+default:
+  image: node:22-alpine
+  cache:
+    key: my-cache
+    paths:
+      - node_modules/ # can only access current dir
+```
+
+In second stage job, test_sth still do `npm ci` it will just run through it very fast.  
+Jobs must be able to run independently with or without cache.
+
+Some people say, cache similar to artifact. You upload, then in other stage you download.  
+But cache used for dependencies.  
+Artifacts are essential to download. If you can't download artifact the job will fail. It's a dependency.
+
+Cache - optimize performance  
+Artifact - essential for the job to work.
+
+Caching needs manual checking to make sure it speeds up the pipeline, not just adds overhead and makes it slower.
+
+```yml
+default:
+  image: node:22-alpine
+  cache:
+    key: "npm-$CI_COMMIT_REF_NAME"
+    paths:
+      - node_modules/
+```
+
+```yml
+default:
+  image: node:22-alpine
+  cache:
+    key:
+      files:
+        - package-lock.json
+    paths:
+      - node_modules/
+```
+
+File is the key. File changed = invalidate cache
+
+Disable cache downloading. For jobs that don't need node_modules. Like deploy_job
+
+```yml
+deploy_job:
+  cache: [] # disables cache for this job
+```
+
+##### Cache policy
+
+default: push and pull. Each job that has cache enabled, downloads and uploads. Might be not neccessary.
+
+```yml
+default:
+  image: node:22-alpine
+  cache: &global_cache
+    key:
+      files:
+        - package-lock.json
+      paths:
+        - node_modules/
+
+unit_tests:
+  stage: test
+  # Inherit global cache settings
+  cache:
+    <<: *global_cache
+    # Override the policy
+    policy: pull # only download cache, not upload
+  script:
+    - npm ci
+    - npm test
+```
+
+Disable upload cache if nothing's changed, no need to upload
+
+```yml
+main_job:
+  stage: build
+  script:
+    - npm ci
+  rules:
+    - changes:
+      - package-lock.json
+    variables:
+      CACHE_POLICY: pull-push
+    - when: always
+    variables:
+      CACHE_POLICY: pull
+  cache:
+    <<: *global_cache
+    policy: $CACHE_POLICY
+  artifacts:
+   # ....
+```
+
+#### Manually invalidate caches
+
+build > pipelines > clear runner caches
